@@ -115,7 +115,7 @@ A post is public only when both are true:
 - `status = 'published'`
 - `published_at <= now()`
 
-`scheduled` posts stay private until `promote_scheduled_posts()` runs (service role) or a later phase promotes them on a schedule. Do not treat `status` alone as visibility.
+`scheduled` posts stay private until `promote_scheduled_posts()` runs (service role). Phase 4 calls that RPC on public cache fill (`getLatestPosts`, listings, article pages) and from `GET/POST /api/cron/promote` (daily on Vercel when `CRON_SECRET` is set). Do not treat `status` alone as visibility.
 
 ## 7. Full-text search
 

@@ -2,7 +2,7 @@
 
 A dynamic editorial publishing platform: a typography-first public publication, a full admin panel, an optimised media pipeline, and a structured rich-text editor. Built with Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui and Supabase.
 
-> **Status: Phase 3 complete.** The public publication reads live Supabase data: homepage, archive, article pages, taxonomy, search and contact. Caching, admin auth and the dashboard arrive in Phases 4–12. See `docs/PHASE_1.md`, `docs/PHASE_2.md` and `docs/PHASE_3.md`.
+> **Status: Phase 4 complete.** The public publication reads live Supabase data behind `"use cache"` and tagged revalidation. Admin auth and the dashboard arrive in Phases 5–12. See `docs/PHASE_1.md` through `docs/PHASE_4.md`.
 
 ## Stack
 
@@ -69,7 +69,8 @@ Copy `.env.example` to `.env.local`. Never commit `.env.local`.
 | `NEXT_PUBLIC_SUPABASE_URL` | client + server | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | client + server | Anon key, guarded by RLS |
 | `NEXT_PUBLIC_SITE_URL` | client + server | Canonical origin for SEO and absolute links |
-| `SUPABASE_SERVICE_ROLE_KEY` | server only | Privileged admin provisioning; bypasses RLS |
+| `SUPABASE_SERVICE_ROLE_KEY` | server only | Privileged admin provisioning and scheduled-post promotion; bypasses RLS |
+| `CRON_SECRET` | server only | Bearer token for `/api/cron/promote` (optional; Vercel Cron) |
 | `NEXT_PUBLIC_EMAILJS_*` | client | Transactional email (contact notifications) |
 
 Access goes through `src/lib/env.ts`, which validates with Zod and fails fast. The service-role key is only read inside `src/lib/supabase/admin.ts`, which is marked `server-only`.
@@ -102,13 +103,15 @@ src/
     env.ts             Validated environment access
     format.ts          Dates, bytes, numbers, slugs, reading time
     seo.ts             Metadata and JSON-LD helpers
-    queries/           Public Supabase reads
+    queries/           Public Supabase reads (`use cache`)
+    cache/             Tags and revalidate/update helpers
     article/           Tiptap JSON helpers
     types/             Database type surface
     utils.ts           Class merging
     supabase/
       client.ts        Browser client (singleton)
       server.ts        Request-scoped server client
+      public.ts        Cookie-less anon client
       admin.ts         Service-role client (server-only)
   proxy.ts             Session refresh (Next.js 16 middleware)
 supabase/migrations/   SQL migrations, RLS, storage, seed settings
@@ -135,6 +138,7 @@ docs/                  Architecture, phase notes, Supabase setup
 - `docs/PHASE_1.md` — what shipped in Phase 1.
 - `docs/PHASE_2.md` — schema, RLS, storage and typed database surface.
 - `docs/PHASE_3.md` — public website, queries and contact form.
+- `docs/PHASE_4.md` — `use cache`, tags, revalidation and scheduled-post promotion.
 - `docs/SUPABASE.md` — project setup, migrations and admin provisioning.
 - `MASTER_PROMPT.md` — the full product specification and phase plan.
 

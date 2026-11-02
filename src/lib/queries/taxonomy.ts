@@ -1,5 +1,8 @@
 import "server-only";
 
+import { cacheLife, cacheTag } from "next/cache";
+
+import { CACHE_TAGS } from "@/lib/cache/tags";
 import { mapMedia, one } from "@/lib/queries/mappers";
 import {
   emptyEnvelope,
@@ -11,6 +14,10 @@ import {
 import { tryCreatePublicClient } from "@/lib/supabase/public";
 
 export async function getCategories(): Promise<QueryEnvelope<CategoryRecord[]>> {
+  "use cache";
+  cacheLife("days");
+  cacheTag(CACHE_TAGS.categories, CACHE_TAGS.posts);
+
   const client = await tryCreatePublicClient();
   if (!client) return emptyEnvelope([]);
 
@@ -54,6 +61,10 @@ export async function getCategories(): Promise<QueryEnvelope<CategoryRecord[]>> 
 export async function getFeaturedCategories(
   limit = 6,
 ): Promise<QueryEnvelope<CategoryRecord[]>> {
+  "use cache";
+  cacheLife("days");
+  cacheTag(CACHE_TAGS.categories, CACHE_TAGS.posts);
+
   const all = await getCategories();
   if (!all.configured || all.error) return all;
   const featured = all.data.filter((item) => item.featured).slice(0, limit);
@@ -66,6 +77,10 @@ export async function getFeaturedCategories(
 export async function getCategoryBySlug(
   slug: string,
 ): Promise<QueryEnvelope<CategoryRecord | null>> {
+  "use cache";
+  cacheLife("days");
+  cacheTag(CACHE_TAGS.categories, CACHE_TAGS.category(slug), CACHE_TAGS.posts);
+
   const all = await getCategories();
   if (!all.configured) return emptyEnvelope(null);
   if (all.error) return failedEnvelope(null, all.error);
@@ -77,6 +92,10 @@ export async function getCategoryBySlug(
 }
 
 export async function getTags(): Promise<QueryEnvelope<TagRecord[]>> {
+  "use cache";
+  cacheLife("days");
+  cacheTag(CACHE_TAGS.tags, CACHE_TAGS.posts);
+
   const client = await tryCreatePublicClient();
   if (!client) return emptyEnvelope([]);
 
@@ -117,6 +136,10 @@ export async function getTags(): Promise<QueryEnvelope<TagRecord[]>> {
 export async function getTagBySlug(
   slug: string,
 ): Promise<QueryEnvelope<TagRecord | null>> {
+  "use cache";
+  cacheLife("days");
+  cacheTag(CACHE_TAGS.tags, CACHE_TAGS.tag(slug), CACHE_TAGS.posts);
+
   const all = await getTags();
   if (!all.configured) return emptyEnvelope(null);
   if (all.error) return failedEnvelope(null, all.error);

@@ -6,7 +6,7 @@ Status: **complete**. Public routes read published content from Supabase. Empty 
 
 ### Query layer
 
-Cookie-less anon client in `src/lib/supabase/public.ts`. Public Server Components never call `cookies()`, so Cache Components can still prerender the shell. `connection()` keeps Phase 3 reads request-fresh until Phase 4 adds `use cache` and tagged revalidation.
+Cookie-less anon client in `src/lib/supabase/public.ts`. Public Server Components never call `cookies()`, so Cache Components can still prerender the shell. Phase 4 wraps these helpers in `use cache` and tagged revalidation.
 
 Typed helpers in `src/lib/queries`:
 

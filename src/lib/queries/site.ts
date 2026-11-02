@@ -1,5 +1,8 @@
 import "server-only";
 
+import { cacheLife, cacheTag } from "next/cache";
+
+import { CACHE_TAGS } from "@/lib/cache/tags";
 import { SITE } from "@/lib/constants";
 import { mapAuthor, one } from "@/lib/queries/mappers";
 import {
@@ -20,6 +23,10 @@ import { getFeaturedCategories } from "@/lib/queries/taxonomy";
 import { tryCreatePublicClient } from "@/lib/supabase/public";
 
 export async function getPrimaryAuthor(): Promise<QueryEnvelope<AuthorRef | null>> {
+  "use cache";
+  cacheLife("days");
+  cacheTag(CACHE_TAGS.authors);
+
   const client = await tryCreatePublicClient();
   if (!client) {
     return emptyEnvelope({
@@ -74,6 +81,10 @@ export async function getPrimaryAuthor(): Promise<QueryEnvelope<AuthorRef | null
 }
 
 export async function getHomepageData(): Promise<QueryEnvelope<HomepageData>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.posts, CACHE_TAGS.categories, CACHE_TAGS.authors);
+
   const [featured, latest, trending, popular, editorsPicks, categories, author] =
     await Promise.all([
       getFeaturedPosts(1),

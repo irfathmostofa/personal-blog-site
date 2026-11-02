@@ -44,8 +44,8 @@ Three trust zones:
 ## Rendering and caching strategy
 
 - **Server Components by default.** Client components are pulled in only for interactive islands: theme toggle, mobile navigation, editor, uploader, media picker.
-- **Public reads are cached.** Post and taxonomy queries are wrapped in `use cache` with explicit `cacheLife` in Phase 4.
-- **Writes invalidate on demand.** Admin mutations call `revalidateTag` for the touched entities so new content appears without a full rebuild.
+- **Public reads are cached.** Post and taxonomy queries are wrapped in `use cache` with explicit `cacheLife` and `cacheTag`.
+- **Writes invalidate on demand.** Admin mutations call helpers in `src/lib/cache` (`revalidateTag(..., "max")` or `updateTag` for read-your-writes).
 - **Authenticated data is never publicly cached.** Admin routes and session reads stay dynamic; the proxy sets private cache headers when it rotates tokens.
 - **Streaming over blocking.** Uncached or request-dependent sections sit behind `<Suspense>` with skeletons instead of blocking the route.
 
@@ -55,10 +55,10 @@ Next.js 16 with Cache Components changes the rules versus earlier versions: `GET
 
 ### Read path (public)
 
-1. Server Component calls a typed query function in `src/lib/queries/*` (Phase 4).
-2. The function creates a request-scoped Supabase client from `src/lib/supabase/server.ts`.
+1. Server Component calls a typed query function in `src/lib/queries/*`.
+2. The function is a `"use cache"` scope. It uses the cookie-less anon client in `src/lib/supabase/public.ts` (never `cookies()` / `headers()`).
 3. RLS restricts rows to `published` posts whose `published_at` has passed.
-4. Results are cached by tag (`posts`, `post:<slug>`, `categories`).
+4. Results are tagged (`posts`, `post:<slug>`, `categories`, `tags`, `authors`) with `cacheLife('hours'|'days')`.
 5. The component renders; the static shell was already served from the edge.
 
 ### Write path (admin)

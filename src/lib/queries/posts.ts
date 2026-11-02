@@ -1,5 +1,8 @@
 import "server-only";
 
+import { cacheLife, cacheTag } from "next/cache";
+
+import { CACHE_TAGS } from "@/lib/cache/tags";
 import { POSTS_PER_PAGE } from "@/lib/constants";
 import {
   asJson,
@@ -10,6 +13,7 @@ import {
   POST_CARD_SELECT,
   POST_DETAIL_SELECT,
 } from "@/lib/queries/mappers";
+import { promoteDuePosts } from "@/lib/queries/schedule";
 import {
   emptyEnvelope,
   failedEnvelope,
@@ -30,6 +34,12 @@ function sortColumn(sort: PostListQuery["sort"]) {
 export async function getPublishedPosts(
   query: PostListQuery = {},
 ): Promise<QueryEnvelope<PostListResult>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.posts);
+  if (query.categorySlug) cacheTag(CACHE_TAGS.category(query.categorySlug), CACHE_TAGS.categories);
+  if (query.tagSlug) cacheTag(CACHE_TAGS.tag(query.tagSlug), CACHE_TAGS.tags);
+
   const page = Math.max(1, query.page ?? 1);
   const perPage = Math.min(48, Math.max(1, query.perPage ?? POSTS_PER_PAGE));
   const empty: PostListResult = {
@@ -39,6 +49,8 @@ export async function getPublishedPosts(
     perPage,
     pageCount: 0,
   };
+
+  await promoteDuePosts();
 
   const client = await tryCreatePublicClient();
   if (!client) return emptyEnvelope(empty);
@@ -123,6 +135,12 @@ export async function getPublishedPosts(
 export async function getPostBySlug(
   slug: string,
 ): Promise<QueryEnvelope<PostDetail | null>> {
+  "use cache";
+  cacheLife("days");
+  cacheTag(CACHE_TAGS.posts, CACHE_TAGS.post(slug));
+
+  await promoteDuePosts();
+
   const client = await tryCreatePublicClient();
   if (!client) return emptyEnvelope(null);
 
@@ -164,6 +182,10 @@ export async function getRelatedPosts(
   post: Pick<PostCard, "id" | "category">,
   limit = 3,
 ): Promise<QueryEnvelope<PostCard[]>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.posts);
+
   const client = await tryCreatePublicClient();
   if (!client) return emptyEnvelope([]);
 
@@ -215,6 +237,10 @@ export async function getRelatedPosts(
 }
 
 export async function getAdjacentPosts(publishedAt: string | null, id: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.posts);
+
   const empty = { previous: null as PostCard | null, next: null as PostCard | null };
   const client = await tryCreatePublicClient();
   if (!client || !publishedAt) return emptyEnvelope(empty);
@@ -255,18 +281,31 @@ export async function getAdjacentPosts(publishedAt: string | null, id: string) {
 }
 
 export async function getFeaturedPosts(limit = 6): Promise<QueryEnvelope<PostCard[]>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.posts);
   return getFlaggedPosts("featured", limit);
 }
 
 export async function getTrendingPosts(limit = 4): Promise<QueryEnvelope<PostCard[]>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.posts);
   return getFlaggedPosts("trending", limit);
 }
 
 export async function getEditorsPicks(limit = 3): Promise<QueryEnvelope<PostCard[]>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.posts);
   return getFlaggedPosts("editors_pick", limit);
 }
 
 export async function getPopularPosts(limit = 5): Promise<QueryEnvelope<PostCard[]>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.posts);
+
   const client = await tryCreatePublicClient();
   if (!client) return emptyEnvelope([]);
 
@@ -289,6 +328,12 @@ export async function getPopularPosts(limit = 5): Promise<QueryEnvelope<PostCard
 }
 
 export async function getLatestPosts(limit = 6): Promise<QueryEnvelope<PostCard[]>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.posts);
+
+  await promoteDuePosts();
+
   const client = await tryCreatePublicClient();
   if (!client) return emptyEnvelope([]);
 
@@ -341,6 +386,10 @@ export async function searchPosts(
   limit = 20,
   offset = 0,
 ): Promise<QueryEnvelope<PostCard[]>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(CACHE_TAGS.posts);
+
   const client = await tryCreatePublicClient();
   if (!client) return emptyEnvelope([]);
 

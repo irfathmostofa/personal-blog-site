@@ -1,6 +1,5 @@
 import "server-only";
 
-import { connection } from "next/server";
 import { createClient as createJsClient } from "@supabase/supabase-js";
 
 import { isSupabaseConfigured, requireSupabaseEnv } from "@/lib/env";
@@ -10,8 +9,8 @@ export type PublicSupabase = ReturnType<typeof createJsClient<Database>>;
 
 /**
  * Cookie-less anon client for public reads and public inserts.
- * Awaits connection() so Phase 3 pages stay request-fresh; Phase 4 replaces
- * that with `use cache` and tagged revalidation.
+ * Safe to call from `"use cache"` scopes because it never reads cookies()
+ * or headers(). Writes (contact) stay in Server Actions and are uncached.
  */
 export function createPublicClient(): PublicSupabase {
   const { url, anonKey } = requireSupabaseEnv();
@@ -27,6 +26,5 @@ export function createPublicClient(): PublicSupabase {
 
 export async function tryCreatePublicClient(): Promise<PublicSupabase | null> {
   if (!isSupabaseConfigured()) return null;
-  await connection();
   return createPublicClient();
 }
