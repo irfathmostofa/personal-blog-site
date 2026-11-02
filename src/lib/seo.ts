@@ -36,7 +36,7 @@ export function buildMetadata({
   const images = image ? [{ url: image, alt: title ?? SITE.name }] : undefined;
 
   return {
-    title: resolvedTitle,
+    title: { absolute: resolvedTitle },
     description,
     alternates: { canonical: url },
     robots: noIndex ? { index: false, follow: false } : undefined,

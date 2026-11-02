@@ -2,7 +2,7 @@
 
 A dynamic editorial publishing platform: a typography-first public publication, a full admin panel, an optimised media pipeline, and a structured rich-text editor. Built with Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui and Supabase.
 
-> **Status: Phase 2 complete.** Architecture, public shell, Postgres schema, RLS, Storage and typed clients are in place. Public content pages, authentication and the admin panel arrive in Phases 3–12. See `docs/PHASE_1.md` and `docs/PHASE_2.md`.
+> **Status: Phase 3 complete.** The public publication reads live Supabase data: homepage, archive, article pages, taxonomy, search and contact. Caching, admin auth and the dashboard arrive in Phases 4–12. See `docs/PHASE_1.md`, `docs/PHASE_2.md` and `docs/PHASE_3.md`.
 
 ## Stack
 
@@ -39,7 +39,7 @@ The app runs at <http://localhost:3000>.
 
 ### Without Supabase credentials
 
-The public shell boots without credentials so the design system can be reviewed. Any data-backed feature reports a clear configuration error instead of failing obscurely. Fill in `.env.local` and apply migrations before Phase 3 work.
+The public shell boots without credentials so the design system can be reviewed. Data-backed pages show an empty or unconfigured state instead of invented articles. Fill in `.env.local` and apply migrations to see live content.
 
 ## Scripts
 
@@ -80,16 +80,19 @@ Access goes through `src/lib/env.ts`, which validates with Zod and fails fast. T
 src/
   app/
     (site)/            Public publication (header + footer shell)
-      page.tsx         Editorial landing page
-      blog/            Listing (Phase 3–4)
-      categories/      Category index (Phase 4)
-      search/          Full-text search (Phase 4)
+      page.tsx         Editorial homepage
+      blog/            Listing and /blog/[slug]
+      category/        Category archives
+      tag/             Tag archives
+      categories/      Category index
+      search/          Full-text search
       about/ contact/ newsletter/
       privacy-policy/ terms-and-conditions/ cookie-policy/
     layout.tsx         Root layout: fonts, metadata, providers
     not-found.tsx      Custom 404
   components/
     brand/             Wordmark
+    content/           Article cards, body renderer, listing, contact form
     layout/            Header, footer, theme toggle, shared page shells
     providers/         Theme + tooltip + toast composition
     ui/                shadcn/ui primitives
@@ -99,6 +102,8 @@ src/
     env.ts             Validated environment access
     format.ts          Dates, bytes, numbers, slugs, reading time
     seo.ts             Metadata and JSON-LD helpers
+    queries/           Public Supabase reads
+    article/           Tiptap JSON helpers
     types/             Database type surface
     utils.ts           Class merging
     supabase/
@@ -129,6 +134,7 @@ docs/                  Architecture, phase notes, Supabase setup
 - `docs/ARCHITECTURE.md` — system boundaries, rendering strategy, data flow.
 - `docs/PHASE_1.md` — what shipped in Phase 1.
 - `docs/PHASE_2.md` — schema, RLS, storage and typed database surface.
+- `docs/PHASE_3.md` — public website, queries and contact form.
 - `docs/SUPABASE.md` — project setup, migrations and admin provisioning.
 - `MASTER_PROMPT.md` — the full product specification and phase plan.
 

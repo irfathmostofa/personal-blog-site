@@ -13,7 +13,7 @@ export default function CookiePolicyPage() {
   return (
     <LegalPage
       title="Cookie policy"
-      updated="Phase 3"
+      updated="2 November 2026"
       intro="This page documents every cookie the site sets. It is written against the actual implementation, which is why it currently lists only the strictly necessary cookies already introduced by the stack."
       sections={[
         {

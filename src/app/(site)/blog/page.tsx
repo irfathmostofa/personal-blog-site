@@ -1,6 +1,20 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { PhaseNotice } from "@/components/layout/phase-notice";
+import { ArticleCard } from "@/components/content/article-card";
+import { ArticleGridSkeleton } from "@/components/content/article-skeleton";
+import {
+  EmptyState,
+  QueryError,
+  UnconfiguredNotice,
+} from "@/components/content/empty-state";
+import { ListingToolbar } from "@/components/content/listing-toolbar";
+import { Pagination } from "@/components/content/pagination";
+import { POSTS_PER_PAGE } from "@/lib/constants";
+import { getPublishedPosts } from "@/lib/queries/posts";
+import { getCategories, getTags } from "@/lib/queries/taxonomy";
+import type { PostSort, PostView } from "@/lib/queries/types";
+import { firstParam, pageParam } from "@/lib/search-params";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -10,12 +24,106 @@ export const metadata: Metadata = buildMetadata({
   path: "/blog",
 });
 
-export default function BlogPage() {
+type Search = Promise<Record<string, string | string[] | undefined>>;
+
+export default function BlogPage({ searchParams }: { searchParams: Search }) {
   return (
-    <PhaseNotice
-      phase="Phase 3 / 4"
-      title="The article listing lands with dynamic content."
-      description="This route is wired into the public shell. Listing, search, filtering, sorting and pagination are built against the Supabase posts schema in Phase 4, which is why nothing is rendered here yet."
-    />
+    <div className="container-editorial py-12 sm:py-16">
+      <header className="max-w-2xl">
+        <p className="text-xs font-semibold tracking-widest text-brand uppercase">
+          Archive
+        </p>
+        <h1 className="mt-2 font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
+          All articles
+        </h1>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          Long-form writing on technology, craft, and the slow web. Filter, sort,
+          and search the published archive.
+        </p>
+      </header>
+      <Suspense fallback={<ArticleGridSkeleton />}>
+        <BlogListing searchParams={searchParams} />
+      </Suspense>
+    </div>
   );
 }
+
+async function BlogListing({ searchParams }: { searchParams: Search }) {
+  const params = await searchParams;
+  const q = firstParam(params.q);
+  const categorySlug = firstParam(params.category);
+  const tagSlug = firstParam(params.tag);
+  const sort = (firstParam(params.sort) as PostSort) || "newest";
+  const view = (firstParam(params.view) as PostView) || "grid";
+  const page = pageParam(params.page);
+
+  const [posts, categories, tags] = await Promise.all([
+    getPublishedPosts({
+      page,
+      perPage: POSTS_PER_PAGE,
+      sort,
+      q,
+      categorySlug,
+      tagSlug,
+    }),
+    getCategories(),
+    getTags(),
+  ]);
+
+  if (!posts.configured) return <div className="mt-10"><UnconfiguredNotice /></div>;
+
+  function hrefFor(nextPage: number) {
+    const next = new URLSearchParams();
+    if (q) next.set("q", q);
+    if (categorySlug) next.set("category", categorySlug);
+    if (tagSlug) next.set("tag", tagSlug);
+    if (sort !== "newest") next.set("sort", sort);
+    if (view !== "grid") next.set("view", view);
+    if (nextPage > 1) next.set("page", String(nextPage));
+    const query = next.toString();
+    return query ? `/blog?${query}` : "/blog";
+  }
+
+  return (
+    <div className="mt-10">
+      <ListingToolbar
+        categories={categories.data}
+        tags={tags.data.filter((tag) => tag.post_count > 0)}
+      />
+      {posts.error ? (
+        <div className="mt-8">
+          <QueryError message={posts.error} />
+        </div>
+      ) : null}
+      {posts.data.items.length === 0 ? (
+        <div className="mt-10">
+          <EmptyState
+            title="No articles match these filters."
+            description="Try a different category, tag, or search term. If the archive is empty, nothing has been published yet."
+            actionHref="/blog"
+            actionLabel="Clear filters"
+          />
+        </div>
+      ) : view === "list" ? (
+        <div className="mt-4">
+          {posts.data.items.map((post) => (
+            <ArticleCard key={post.id} post={post} layout="list" />
+          ))}
+        </div>
+      ) : (
+        <div className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {posts.data.items.map((post) => (
+            <ArticleCard key={post.id} post={post} />
+          ))}
+        </div>
+      )}
+      <Pagination
+        page={posts.data.page}
+        pageCount={posts.data.pageCount}
+        hrefFor={hrefFor}
+      />
+    </div>
+  );
+}
+
+

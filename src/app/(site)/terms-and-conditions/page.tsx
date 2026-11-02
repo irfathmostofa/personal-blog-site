@@ -13,8 +13,8 @@ export default function TermsPage() {
   return (
     <LegalPage
       title="Terms and conditions"
-      updated="Phase 3"
-      intro="Placeholder structure for the publication terms. The copy is finalised in Phase 3 alongside the public pages so it reflects the shipped comment, newsletter and contact features."
+      updated="2 November 2026"
+      intro="These terms govern use of the public publication, including reading articles, sending contact messages, and (once enabled) leaving comments or subscribing."
       sections={[
         {
           heading: "Content ownership",

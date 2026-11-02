@@ -26,7 +26,7 @@ export function LegalPage({
           className="h-auto gap-2 rounded-full border-brand/30 bg-brand-muted/40 px-3 py-1 text-brand"
         >
           <FileTextIcon className="size-3" aria-hidden />
-          Draft pending {updated} implementation
+          Last updated {updated}
         </Badge>
 
         <h1 className="mt-6 font-heading text-4xl font-semibold tracking-tight sm:text-5xl">

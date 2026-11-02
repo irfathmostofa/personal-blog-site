@@ -14,7 +14,7 @@ export default function PrivacyPolicyPage() {
   return (
     <LegalPage
       title="Privacy policy"
-      updated="Phase 3"
+      updated="2 November 2026"
       intro="This is the structural placeholder for the privacy policy. The final text is written once the data flows below are implemented, so the policy describes what the software actually does rather than what we intend it to do."
       sections={[
         {
