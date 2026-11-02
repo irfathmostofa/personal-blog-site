@@ -10,8 +10,9 @@ import type { Database } from "@/lib/types/database";
  * client component, a route handler response body, or any shared module that
  * can reach the browser bundle.
  *
- * Used in Phase 2 for privileged server-side operations (admin provisioning,
- * media cleanup) that cannot be expressed safely through user-scoped RLS.
+ * Used for privileged server-side operations (admin provisioning, scheduled
+ * post promotion, media cleanup) that cannot be expressed safely through
+ * user-scoped RLS.
  */
 export function createAdminClient() {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

@@ -83,7 +83,7 @@ Key decisions:
 - `media_assets` records both original and optimised file sizes so compression statistics reflect real numbers.
 - Deletion of categories, tags and media is blocked or warned when references exist, rather than silently orphaning content.
 
-Full DDL, indexes, triggers and policies land in `supabase/migrations` during Phase 2.
+Full DDL, indexes, triggers and policies live in `supabase/migrations`. Setup and admin provisioning are in `docs/SUPABASE.md`.
 
 ## Media pipeline
 

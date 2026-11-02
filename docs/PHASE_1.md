@@ -82,23 +82,17 @@ All three pass. The build reports 11 static routes plus the proxy, with `/` and 
 
 - `requireSupabaseEnv()` and the three Supabase clients are the only sanctioned entry points.
 - The enum type aliases (`post_status`, `comment_status`, `subscriber_status`, `user_role`, `media_folder`) already exist and are reused by migrations.
-- `Database` is intentionally a placeholder; Phase 2 replaces it with generated types.
+- `Database` was a placeholder in Phase 1; Phase 2 replaced it with the full table surface in `src/lib/types/database.ts`.
 - `proxy.ts` already refreshes sessions, so Phase 5 only adds authorization policy.
 
 ## Deliberate omissions
 
 - No `middleware.ts` — Next.js 16 renamed it to `proxy.ts`.
 - No admin layout or auth guard — Phase 5.
-- No SQL migrations or RLS policies — Phase 2.
+- SQL migrations and RLS now live in `supabase/migrations` (Phase 2).
 - No mock posts or seeded statistics anywhere in the UI.
 - No SVG assets beyond the framework defaults; branding is typographic.
 
 ## Phase 2 checklist
 
-1. Create the thirteen tables with constraints and indexes.
-2. Enable RLS and write policies for each table.
-3. Create the `blog-media` bucket and its storage policies.
-4. Add `set_updated_at` triggers and the post publication-eligibility helper.
-5. Add full-text search vector on `posts`.
-6. Generate `src/lib/types/database.ts` from the live project.
-7. Document admin provisioning via the service-role script.
+Completed in `docs/PHASE_2.md` and `docs/SUPABASE.md`. Remaining after a live project exists: run `npx supabase gen types typescript --project-id <id>` to replace the hand-written types.

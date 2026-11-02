@@ -2,7 +2,7 @@
 
 A dynamic editorial publishing platform: a typography-first public publication, a full admin panel, an optimised media pipeline, and a structured rich-text editor. Built with Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui and Supabase.
 
-> **Status: Phase 1 complete.** Architecture, project setup, design system and the public shell are implemented. Content, authentication, the admin panel, media library and editor arrive in Phases 2–12. See `docs/PHASE_1.md`.
+> **Status: Phase 2 complete.** Architecture, public shell, Postgres schema, RLS, Storage and typed clients are in place. Public content pages, authentication and the admin panel arrive in Phases 3–12. See `docs/PHASE_1.md` and `docs/PHASE_2.md`.
 
 ## Stack
 
@@ -20,7 +20,7 @@ A dynamic editorial publishing platform: a typography-first public publication, 
 
 - Node.js 22 or newer
 - npm 10 or newer
-- A free Supabase project (Phase 2 onward)
+- A free Supabase project with the migrations in `supabase/migrations` applied (see `docs/SUPABASE.md`)
 
 ## Local development
 
@@ -39,7 +39,7 @@ The app runs at <http://localhost:3000>.
 
 ### Without Supabase credentials
 
-The public shell boots without credentials so the design system can be reviewed. Any data-backed feature reports a clear configuration error instead of failing obscurely. Fill in `.env.local` before Phase 2 work.
+The public shell boots without credentials so the design system can be reviewed. Any data-backed feature reports a clear configuration error instead of failing obscurely. Fill in `.env.local` and apply migrations before Phase 3 work.
 
 ## Scripts
 
@@ -106,8 +106,8 @@ src/
       server.ts        Request-scoped server client
       admin.ts         Service-role client (server-only)
   proxy.ts             Session refresh (Next.js 16 middleware)
-supabase/migrations/   SQL migrations (Phase 2)
-docs/                  Architecture and phase notes
+supabase/migrations/   SQL migrations, RLS, storage, seed settings
+docs/                  Architecture, phase notes, Supabase setup
 ```
 
 ## Design system
@@ -122,12 +122,14 @@ docs/                  Architecture and phase notes
 - Admin authorization is enforced server-side in later phases; route-level UI hiding is never treated as protection.
 - The service-role key is isolated behind `server-only` and is never imported into client code.
 - Sessions are cookie-based via `@supabase/ssr` and refreshed in `src/proxy.ts` with `Cache-Control: private, no-store` semantics.
-- Supabase RLS is the default authorization mechanism; see Phase 2.
+- Supabase RLS is the default authorization mechanism; see `docs/SUPABASE.md`.
 
 ## Docs
 
 - `docs/ARCHITECTURE.md` — system boundaries, rendering strategy, data flow.
-- `docs/PHASE_1.md` — what shipped in Phase 1 and what Phase 2 depends on.
+- `docs/PHASE_1.md` — what shipped in Phase 1.
+- `docs/PHASE_2.md` — schema, RLS, storage and typed database surface.
+- `docs/SUPABASE.md` — project setup, migrations and admin provisioning.
 - `MASTER_PROMPT.md` — the full product specification and phase plan.
 
 ## License
