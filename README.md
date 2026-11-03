@@ -99,7 +99,7 @@ src/
     editor/            Tiptap composer, toolbar, image node, post form
     media/             Uploader, library, picker, delete workflow
     brand/             Wordmark
-    content/           Article cards, body renderer, listing, contact form
+     content/           Article cards, body renderer, listing, contact and comment forms
     layout/            Header, footer, theme toggle, shared page shells
     providers/         Theme + tooltip + toast composition
     ui/                shadcn/ui primitives

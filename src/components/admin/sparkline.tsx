@@ -1,4 +1,4 @@
-import type { SparkPoint } from "@/lib/admin/stats";
+import type { SparkPoint } from "@/lib/admin/spark";
 import { cn } from "@/lib/utils";
 
 export function Sparkline({

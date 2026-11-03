@@ -2,6 +2,7 @@ import "server-only";
 
 import { connection } from "next/server";
 
+import { emptySpark, fillSpark, type SparkPoint } from "@/lib/admin/spark";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import type { PostStatus } from "@/lib/types/database";
@@ -21,11 +22,7 @@ export type AdminCounts = {
   unreadMessages: number;
 };
 
-export type SparkPoint = {
-  key: string;
-  label: string;
-  value: number;
-};
+export type { SparkPoint };
 
 export type PopularPostRow = {
   id: string;
@@ -72,38 +69,6 @@ const EMPTY_COUNTS: AdminCounts = {
 
 const DAY_MS = 86_400_000;
 const SPARK_DAYS = 14;
-
-function utcDayKey(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
-function utcDayLabel(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  }).format(date);
-}
-
-function emptySpark(days: number): SparkPoint[] {
-  const end = new Date();
-  end.setUTCHours(0, 0, 0, 0);
-  return Array.from({ length: days }, (_, index) => {
-    const date = new Date(end.getTime() - (days - 1 - index) * DAY_MS);
-    return { key: utcDayKey(date), label: utcDayLabel(date), value: 0 };
-  });
-}
-
-function fillSpark(days: number, timestamps: string[]): SparkPoint[] {
-  const series = emptySpark(days);
-  const index = new Map(series.map((point, i) => [point.key, i]));
-  for (const stamp of timestamps) {
-    const key = stamp.slice(0, 10);
-    const i = index.get(key);
-    if (i !== undefined) series[i].value += 1;
-  }
-  return series;
-}
 
 async function countRows(
   query: PromiseLike<{ count: number | null; error: { message: string } | null }>,

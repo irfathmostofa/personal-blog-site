@@ -64,6 +64,6 @@ Without Supabase credentials the public shell still builds. With credentials app
 
 - No `use cache`, ISR or on-demand revalidation — Phase 4.
 - No likes, bookmarks, cookie banner, sitemap or RSS — Phase 10.
-- No public comment form — Phase 9.
+- Public comment form and moderation shipped in Phase 9.
 - No Tiptap editor or media library — Phases 7–8.
 - Newsletter insert is documented, not faked.
