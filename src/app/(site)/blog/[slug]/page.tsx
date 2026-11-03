@@ -7,6 +7,8 @@ import { ArticleBody } from "@/components/content/article-body";
 import { ArticleCard, ArticleMeta } from "@/components/content/article-card";
 import { ArticleCover } from "@/components/content/article-cover";
 import { AuthorCard } from "@/components/content/author-card";
+import { CommentForm } from "@/components/content/comment-form";
+import { CommentThread } from "@/components/content/comment-thread";
 import { NewsletterCta } from "@/components/content/newsletter-cta";
 import { QueryError } from "@/components/content/empty-state";
 import { ReadingProgress } from "@/components/content/reading-progress";
@@ -15,11 +17,13 @@ import { TableOfContents } from "@/components/content/table-of-contents";
 import { asTiptapDoc, extractToc } from "@/lib/article/tiptap";
 import { formatDate } from "@/lib/format";
 import { SITE } from "@/lib/constants";
+import { getApprovedComments } from "@/lib/queries/comments";
 import {
   getAdjacentPosts,
   getPostBySlug,
   getRelatedPosts,
 } from "@/lib/queries/posts";
+import { getSiteSettings } from "@/lib/queries/settings";
 import { absoluteUrl, buildMetadata, jsonLdScript } from "@/lib/seo";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -72,10 +76,14 @@ async function ArticleContent({ params }: { params: Params }) {
   if (!result.data) notFound();
 
   const post = result.data;
-  const [related, adjacent] = await Promise.all([
+  const [related, adjacent, comments, siteSettings] = await Promise.all([
     getRelatedPosts(post, 3),
     getAdjacentPosts(post.published_at, post.id),
+    getApprovedComments(post.id, post.slug),
+    getSiteSettings(),
   ]);
+  const commentsOpen =
+    post.comments_enabled && siteSettings.data.content.comments_enabled;
 
   const toc = extractToc(asTiptapDoc(post.content));
   const url = absoluteUrl(`/blog/${post.slug}`);
@@ -232,12 +240,24 @@ async function ArticleContent({ params }: { params: Params }) {
           </section>
         ) : null}
         <NewsletterCta compact />
-        {post.comments_enabled ? (
-          <p className="text-sm text-muted-foreground">
-            Comments are enabled for this article. The public comment form ships
-            with comment moderation in Phase 9.
-          </p>
-        ) : null}
+        <section className="container-read mx-auto space-y-8">
+          <div>
+            <h2 className="font-heading text-2xl font-semibold tracking-tight">
+              Comments
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {commentsOpen
+                ? "Notes are reviewed before they appear. Email is never shown publicly."
+                : "Comments are closed on this article."}
+            </p>
+          </div>
+          {comments.error ? (
+            <QueryError message={comments.error} />
+          ) : (
+            <CommentThread comments={comments.data} />
+          )}
+          {commentsOpen ? <CommentForm postId={post.id} /> : null}
+        </section>
       </div>
     </>
   );

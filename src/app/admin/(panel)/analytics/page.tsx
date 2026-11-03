@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { AdminComingSoon } from "@/components/admin/admin-coming-soon";
+import { AdminPageHeader } from "@/components/admin/page-header";
+import { AnalyticsView } from "@/components/admin/analytics-view";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getAnalyticsStats } from "@/lib/admin/analytics";
+import { requireStaff } from "@/lib/auth";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -12,10 +17,23 @@ export const metadata: Metadata = buildMetadata({
 
 export default function AdminAnalyticsPage() {
   return (
-    <AdminComingSoon
-      title="Analytics"
-      phase="9"
-      description="The dedicated analytics view expands the dashboard charts. Headline counts already live on the dashboard."
-    />
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+      <AdminPageHeader
+        eyebrow="Performance"
+        title="Analytics"
+        description="First-party counts from stored rows. View events are hits, not unique visitors."
+      />
+      <div className="mt-8">
+        <Suspense fallback={<Skeleton className="h-64 rounded-2xl" />}>
+          <AnalyticsBody />
+        </Suspense>
+      </div>
+    </div>
   );
+}
+
+async function AnalyticsBody() {
+  await requireStaff("/admin/analytics");
+  const stats = await getAnalyticsStats();
+  return <AnalyticsView stats={stats} />;
 }

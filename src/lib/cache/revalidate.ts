@@ -35,6 +35,22 @@ export function revalidateAuthors() {
   revalidatePath("/about");
 }
 
+export function revalidateComments(slug?: string) {
+  revalidateTag(CACHE_TAGS.comments, STALE_WHILE_REVALIDATE);
+  if (slug) {
+    revalidateTag(CACHE_TAGS.post(slug), STALE_WHILE_REVALIDATE);
+    revalidatePath(`/blog/${slug}`);
+  }
+}
+
+export function revalidateSettings() {
+  revalidateTag(CACHE_TAGS.settings, STALE_WHILE_REVALIDATE);
+  revalidateTag(CACHE_TAGS.authors, STALE_WHILE_REVALIDATE);
+  revalidatePath("/");
+  revalidatePath("/about");
+  revalidatePath("/blog");
+}
+
 export function refreshPosts() {
   updateTag(CACHE_TAGS.posts);
 }
@@ -52,4 +68,12 @@ export function refreshTaxonomy() {
 
 export function refreshAuthors() {
   updateTag(CACHE_TAGS.authors);
+}
+
+export function refreshComments() {
+  updateTag(CACHE_TAGS.comments);
+}
+
+export function refreshSettings() {
+  updateTag(CACHE_TAGS.settings);
 }

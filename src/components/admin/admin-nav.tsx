@@ -58,7 +58,15 @@ export function AdminNav({
         const Icon = ICONS[item.icon];
         const active = isActive(pathname, item.href);
         const ready =
-          item.href === "/admin/dashboard" || item.href === "/admin/media";
+          item.href === "/admin/dashboard" ||
+          item.href === "/admin/media" ||
+          item.href === "/admin/categories" ||
+          item.href === "/admin/tags" ||
+          item.href === "/admin/comments" ||
+          item.href === "/admin/subscribers" ||
+          item.href === "/admin/messages" ||
+          item.href === "/admin/analytics" ||
+          item.href === "/admin/settings";
         return (
           <Link
             key={item.href}

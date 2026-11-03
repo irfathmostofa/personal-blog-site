@@ -2,7 +2,7 @@
 
 A dynamic editorial publishing platform: a typography-first public publication, a full admin panel, an optimised media pipeline, and a structured rich-text editor. Built with Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui and Supabase.
 
-> **Status: Phase 7 complete.** Staff sign in at `/admin`. The newsroom dashboard shows live counts. The media library uploads, compresses and stores images. The article editor arrives in Phase 8. See `docs/PHASE_1.md` through `docs/PHASE_7.md`.
+> **Status: Phase 9 complete.** Staff sign in at `/admin`. The newsroom covers dashboard, media, categories, tags, comments, subscribers, messages, analytics and settings. The article editor remains Phase 8. See `docs/PHASE_1.md` through `docs/PHASE_9.md`.
 
 ## Stack
 
@@ -89,21 +89,21 @@ src/
       search/          Full-text search
       about/ contact/ newsletter/
       privacy-policy/ terms-and-conditions/ cookie-policy/
-    admin/             Staff newsroom (login + protected panel)
+    admin/             Staff newsroom (login + protected panel, Phase 9 tools)
     layout.tsx         Root layout: fonts, metadata, providers
     not-found.tsx      Custom 404
   components/
-    admin/             Login, shell, sidebar, dashboard widgets
+    admin/             Login, shell, sidebar, dashboard, taxonomy, comments, inbox, settings
     media/             Uploader, library, picker, delete workflow
     brand/             Wordmark
-    content/           Article cards, body renderer, listing, contact form
+     content/           Article cards, body renderer, listing, contact and comment forms
     layout/            Header, footer, theme toggle, shared page shells
     providers/         Theme + tooltip + toast composition
     ui/                shadcn/ui primitives
   hooks/               Reusable client hooks
   lib/
     auth/              Staff session, role checks, safe redirects
-    admin/             Dashboard statistics and media queries (uncached, staff-only)
+     admin/             Dashboard, taxonomy, comments, subscribers, messages, analytics, settings
     media/             Compression settings, storage paths, media types
     constants.ts       Site identity and navigation
     env.ts             Validated environment access
@@ -148,6 +148,7 @@ docs/                  Architecture, phase notes, Supabase setup
 - `docs/PHASE_5.md` — admin login, cookie sessions and server-side role checks.
 - `docs/PHASE_6.md` — newsroom shell, live statistics and charts.
 - `docs/PHASE_7.md` — image uploader, optimization, library and picker.
+- `docs/PHASE_9.md` — categories, tags, comments, subscribers, messages, analytics and settings.
 - `docs/SUPABASE.md` — project setup, migrations and admin provisioning.
 - `MASTER_PROMPT.md` — the full product specification and phase plan.
 
