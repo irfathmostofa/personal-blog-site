@@ -2,7 +2,7 @@
 
 A dynamic editorial publishing platform: a typography-first public publication, a full admin panel, an optimised media pipeline, and a structured rich-text editor. Built with Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui and Supabase.
 
-> **Status: Phase 4 complete.** The public publication reads live Supabase data behind `"use cache"` and tagged revalidation. Admin auth and the dashboard arrive in Phases 5–12. See `docs/PHASE_1.md` through `docs/PHASE_4.md`.
+> **Status: Phase 5 complete.** The public publication reads live Supabase data behind `"use cache"`. Staff sign in at `/admin`; every newsroom route verifies `profiles.role` on the server. The dashboard UI arrives in Phase 6. See `docs/PHASE_1.md` through `docs/PHASE_5.md`.
 
 ## Stack
 
@@ -89,9 +89,11 @@ src/
       search/          Full-text search
       about/ contact/ newsletter/
       privacy-policy/ terms-and-conditions/ cookie-policy/
+    admin/             Staff newsroom (login + protected panel)
     layout.tsx         Root layout: fonts, metadata, providers
     not-found.tsx      Custom 404
   components/
+    admin/             Login form, chrome, sign-out
     brand/             Wordmark
     content/           Article cards, body renderer, listing, contact form
     layout/            Header, footer, theme toggle, shared page shells
@@ -99,6 +101,7 @@ src/
     ui/                shadcn/ui primitives
   hooks/               Reusable client hooks
   lib/
+    auth/              Staff session, role checks, safe redirects
     constants.ts       Site identity and navigation
     env.ts             Validated environment access
     format.ts          Dates, bytes, numbers, slugs, reading time
@@ -113,7 +116,7 @@ src/
       server.ts        Request-scoped server client
       public.ts        Cookie-less anon client
       admin.ts         Service-role client (server-only)
-  proxy.ts             Session refresh (Next.js 16 middleware)
+  proxy.ts             Session refresh and private admin cache headers
 supabase/migrations/   SQL migrations, RLS, storage, seed settings
 docs/                  Architecture, phase notes, Supabase setup
 ```
@@ -127,7 +130,7 @@ docs/                  Architecture, phase notes, Supabase setup
 
 ## Security posture
 
-- Admin authorization is enforced server-side in later phases; route-level UI hiding is never treated as protection.
+- Admin authorization is enforced server-side (`requireStaff` / `requireAdmin`); route-level UI hiding is never treated as protection.
 - The service-role key is isolated behind `server-only` and is never imported into client code.
 - Sessions are cookie-based via `@supabase/ssr` and refreshed in `src/proxy.ts` with `Cache-Control: private, no-store` semantics.
 - Supabase RLS is the default authorization mechanism; see `docs/SUPABASE.md`.
@@ -139,6 +142,7 @@ docs/                  Architecture, phase notes, Supabase setup
 - `docs/PHASE_2.md` — schema, RLS, storage and typed database surface.
 - `docs/PHASE_3.md` — public website, queries and contact form.
 - `docs/PHASE_4.md` — `use cache`, tags, revalidation and scheduled-post promotion.
+- `docs/PHASE_5.md` — admin login, cookie sessions and server-side role checks.
 - `docs/SUPABASE.md` — project setup, migrations and admin provisioning.
 - `MASTER_PROMPT.md` — the full product specification and phase plan.
 

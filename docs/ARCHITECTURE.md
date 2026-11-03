@@ -64,10 +64,18 @@ Next.js 16 with Cache Components changes the rules versus earlier versions: `GET
 ### Write path (admin)
 
 1. A Server Action validates input with Zod.
-2. It re-reads the Supabase session and verifies the caller's `profiles.role` server-side.
+2. It re-reads the Supabase session (`auth.getUser()`) and verifies the caller's `profiles.role` via `requireStaff` / `requireAdmin`.
 3. The mutation runs through the user-scoped client so RLS applies, or through the service-role client for operations RLS cannot express safely.
 4. `revalidateTag` invalidates affected public caches.
 5. The action returns a typed result; the UI updates optimistically where it helps.
+
+### Auth path (staff)
+
+1. `/admin` posts email and password to the `signIn` Server Action.
+2. Supabase Auth sets http-only cookies through `@supabase/ssr`.
+3. The action loads `profiles.role`. Non-staff sessions are signed out immediately.
+4. `src/app/admin/(panel)/layout.tsx` calls `requireStaff()` on every newsroom render. Cookie reads sit behind `<Suspense>`.
+5. `src/proxy.ts` rotates tokens and marks `/admin` responses `private, no-store`.
 
 ## Database
 

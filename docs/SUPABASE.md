@@ -69,7 +69,7 @@ In Authentication -> Settings:
 - Site URL: `http://localhost:3000` locally, the production origin in production.
 - Add the production origin to Redirect URLs.
 
-The `handle_new_user` trigger inserts a `profiles` row for every Auth user. New profiles default to `role = 'editor'`. They cannot reach admin mutations until you promote them, and Phase 5 still verifies the role on the server.
+The `handle_new_user` trigger inserts a `profiles` row for every Auth user. New profiles default to `role = 'editor'`. Sign in at `/admin`. `requireStaff` still verifies the role on the server; a valid Auth user without a staff profile is signed out.
 
 ## 5. Provision the first administrator
 

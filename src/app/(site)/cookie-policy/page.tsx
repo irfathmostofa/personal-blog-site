@@ -18,7 +18,7 @@ export default function CookiePolicyPage() {
       sections={[
         {
           heading: "Strictly necessary",
-          body: "Theme preference (light, dark, or follow system) is stored locally in the browser, not in a tracking cookie. Admin sessions use Supabase http-only auth cookies scoped to the admin routes.",
+          body: "Theme preference (light, dark, or follow system) is stored locally in the browser, not in a tracking cookie. Staff sessions use Supabase http-only auth cookies set at /admin. They are not used to track readers.",
         },
         {
           heading: "Analytics",

@@ -3,13 +3,27 @@ import { createServerClient } from "@supabase/ssr";
 
 import { isSupabaseConfigured } from "@/lib/env";
 
+function withPrivateAdminHeaders(
+  request: NextRequest,
+  response: NextResponse,
+): NextResponse {
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    response.headers.set("Cache-Control", "private, no-store");
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+  return response;
+}
+
 /**
  * Refreshes the Supabase session on every matched request so Server Components
  * see a valid session. Route-level authorization is enforced server-side in
- * `lib/auth` (Phase 5); this proxy is only responsible for token rotation.
+ * `lib/auth`; this proxy only rotates tokens and marks admin responses private.
  */
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  let response = withPrivateAdminHeaders(
+    request,
+    NextResponse.next({ request }),
+  );
 
   if (!isSupabaseConfigured()) return response;
 
@@ -27,7 +41,10 @@ export async function proxy(request: NextRequest) {
           request.cookies.set(name, value);
         });
 
-        response = NextResponse.next({ request });
+        response = withPrivateAdminHeaders(
+          request,
+          NextResponse.next({ request }),
+        );
 
         cookiesToSet.forEach(({ name, value, options }) => {
           response.cookies.set(name, value, options);
@@ -37,7 +54,6 @@ export async function proxy(request: NextRequest) {
   });
 
   try {
-    // Triggers a token refresh when the access token is close to expiry.
     await supabase.auth.getClaims();
   } catch {
     // A failed refresh should not block public traffic.
@@ -48,10 +64,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Run on everything except static assets and image optimization requests,
-     * which never need a session.
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|txt|xml)$).*)",
   ],
 };
