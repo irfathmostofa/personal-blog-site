@@ -5,20 +5,12 @@ import { redirect } from "next/navigation";
 import { connection } from "next/server";
 
 import { loginRedirect } from "@/lib/auth/paths";
+import type { StaffProfile, StaffSession } from "@/lib/auth/types";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
-import type { Profile, UserRole } from "@/lib/types/database";
+import type { UserRole } from "@/lib/types/database";
 
-export type StaffProfile = Pick<
-  Profile,
-  "id" | "email" | "display_name" | "slug" | "role" | "bio"
->;
-
-export type StaffSession = {
-  userId: string;
-  email: string;
-  profile: StaffProfile;
-};
+export type { StaffProfile, StaffSession };
 
 const STAFF_ROLES: readonly UserRole[] = ["admin", "editor"];
 

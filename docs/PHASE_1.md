@@ -21,7 +21,7 @@ Deliberately deferred:
 | `@tiptap/react` + extensions | 8 | No editor surface exists yet |
 | `browser-image-compression` | 7 | No upload path exists yet |
 | `@emailjs/browser` | 3 | Contact form is not built yet |
-| Charting library | 6 | Dashboard is not built yet |
+| Charting library | 6 | Dashboard uses CSS bar series instead |
 
 Installing them now would add unused weight and hide the real dependency graph.
 

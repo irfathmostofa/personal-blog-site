@@ -26,7 +26,7 @@ Session and role checks live in admin routes and Server Actions. Cached public h
 ### Protected shell
 
 - Route group `src/app/admin/(panel)` wraps every newsroom page. The layout calls `requireStaff` behind `<Suspense>`.
-- `/admin/dashboard` confirms the signed-in profile (name, email, role, slug) and offers sign-out. Statistics and the sidebar are Phase 6.
+- `/admin/dashboard` is a protected newsroom route. Phase 6 replaced the profile confirmation card with live statistics and a sidebar.
 - `signOut` is a Server Action: `auth.signOut()` then redirect to `/admin`.
 - Admin metadata is `noIndex`. The proxy sets `Cache-Control: private, no-store` and `X-Robots-Tag: noindex, nofollow` on `/admin`.
 

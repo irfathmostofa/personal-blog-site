@@ -54,5 +54,19 @@ export const ADMIN_NAV = [
   { label: "Settings", href: "/admin/settings", icon: "Settings" },
 ] as const;
 
+export const ADMIN_NAV_PHASE: Record<(typeof ADMIN_NAV)[number]["href"], string> = {
+  "/admin/dashboard": "6",
+  "/admin/posts": "8",
+  "/admin/posts/new": "8",
+  "/admin/categories": "9",
+  "/admin/tags": "9",
+  "/admin/media": "7",
+  "/admin/comments": "9",
+  "/admin/subscribers": "9",
+  "/admin/messages": "9",
+  "/admin/analytics": "9",
+  "/admin/settings": "9",
+};
+
 export const POSTS_PER_PAGE = 9;
 export const MEDIA_PER_PAGE = 24;

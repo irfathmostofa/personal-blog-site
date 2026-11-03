@@ -2,7 +2,7 @@
 
 A dynamic editorial publishing platform: a typography-first public publication, a full admin panel, an optimised media pipeline, and a structured rich-text editor. Built with Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui and Supabase.
 
-> **Status: Phase 5 complete.** The public publication reads live Supabase data behind `"use cache"`. Staff sign in at `/admin`; every newsroom route verifies `profiles.role` on the server. The dashboard UI arrives in Phase 6. See `docs/PHASE_1.md` through `docs/PHASE_5.md`.
+> **Status: Phase 6 complete.** Staff sign in at `/admin`. The newsroom dashboard shows live counts and charts. Media, editor and remaining admin tools arrive in Phases 7–12. See `docs/PHASE_1.md` through `docs/PHASE_6.md`.
 
 ## Stack
 
@@ -93,7 +93,7 @@ src/
     layout.tsx         Root layout: fonts, metadata, providers
     not-found.tsx      Custom 404
   components/
-    admin/             Login form, chrome, sign-out
+    admin/             Login, shell, sidebar, dashboard widgets
     brand/             Wordmark
     content/           Article cards, body renderer, listing, contact form
     layout/            Header, footer, theme toggle, shared page shells
@@ -102,6 +102,7 @@ src/
   hooks/               Reusable client hooks
   lib/
     auth/              Staff session, role checks, safe redirects
+    admin/             Dashboard statistics (uncached, staff-only)
     constants.ts       Site identity and navigation
     env.ts             Validated environment access
     format.ts          Dates, bytes, numbers, slugs, reading time
@@ -143,6 +144,7 @@ docs/                  Architecture, phase notes, Supabase setup
 - `docs/PHASE_3.md` — public website, queries and contact form.
 - `docs/PHASE_4.md` — `use cache`, tags, revalidation and scheduled-post promotion.
 - `docs/PHASE_5.md` — admin login, cookie sessions and server-side role checks.
+- `docs/PHASE_6.md` — newsroom shell, live statistics and charts.
 - `docs/SUPABASE.md` — project setup, migrations and admin provisioning.
 - `MASTER_PROMPT.md` — the full product specification and phase plan.
 
