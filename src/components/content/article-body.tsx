@@ -37,6 +37,8 @@ function wrapMarks(text: string, marks: TiptapMark[] | undefined, key: string): 
       node = <s key={`${key}-s`}>{node}</s>;
     } else if (mark.type === "code") {
       node = <code key={`${key}-c`}>{node}</code>;
+    } else if (mark.type === "highlight") {
+      node = <mark key={`${key}-h`}>{node}</mark>;
     } else if (mark.type === "link") {
       const href = attrString(mark.attrs, "href") ?? "#";
       const target = attrString(mark.attrs, "target") ?? undefined;
@@ -77,19 +79,31 @@ function imageAlignClass(align: string | null) {
   return "mx-auto";
 }
 
+function alignStyle(attrs: Record<string, unknown> | undefined): CSSProperties | undefined {
+  const align = attrString(attrs, "textAlign");
+  if (!align || align === "left") return undefined;
+  return { textAlign: align as CSSProperties["textAlign"] };
+}
+
 function renderNode(node: TiptapNode, key: string, headingIds?: Map<string, number>): ReactNode {
   switch (node.type) {
     case "paragraph":
-      return <p key={key}>{renderInline(node.content, key)}</p>;
+      return (
+        <p key={key} style={alignStyle(node.attrs)}>
+          {renderInline(node.content, key)}
+        </p>
+      );
     case "heading": {
       const level = Number(node.attrs?.level ?? 2);
-      const Tag = (level === 3 ? "h3" : level === 4 ? "h4" : "h2") as "h2" | "h3" | "h4";
+      const Tag = (
+        level === 1 ? "h2" : level === 3 ? "h3" : level === 4 ? "h4" : "h2"
+      ) as "h2" | "h3" | "h4";
       const id =
         headingIds && (level === 2 || level === 3)
           ? headingIdFor(node, headingIds)
           : undefined;
       return (
-        <Tag key={key} id={id}>
+        <Tag key={key} id={id} style={alignStyle(node.attrs)}>
           {renderInline(node.content, key)}
         </Tag>
       );

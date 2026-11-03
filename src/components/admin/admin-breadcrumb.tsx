@@ -6,9 +6,9 @@ import { ChevronRightIcon } from "lucide-react";
 
 import { ADMIN_NAV } from "@/lib/constants";
 
-const LABELS: Record<string, string> = Object.fromEntries(
-  ADMIN_NAV.map((item) => [item.href, item.label]),
-);
+const LABELS: Record<string, string> = {
+  ...Object.fromEntries(ADMIN_NAV.map((item) => [item.href, item.label])),
+};
 
 function crumbsFor(pathname: string) {
   const parts = pathname.split("/").filter(Boolean);

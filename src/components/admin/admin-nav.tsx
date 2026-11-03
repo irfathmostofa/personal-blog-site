@@ -58,7 +58,10 @@ export function AdminNav({
         const Icon = ICONS[item.icon];
         const active = isActive(pathname, item.href);
         const ready =
-          item.href === "/admin/dashboard" || item.href === "/admin/media";
+          item.href === "/admin/dashboard" ||
+          item.href === "/admin/media" ||
+          item.href === "/admin/posts" ||
+          item.href === "/admin/posts/new";
         return (
           <Link
             key={item.href}

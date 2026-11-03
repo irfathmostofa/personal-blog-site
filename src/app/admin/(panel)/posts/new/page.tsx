@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { EditorMediaPanel } from "@/components/media/editor-media-panel";
-import { Badge } from "@/components/ui/badge";
+import { PostForm } from "@/components/editor/post-form";
+import { Skeleton } from "@/components/ui/skeleton";
+import { listEditorTaxonomy } from "@/lib/admin/posts";
+import { requireStaff } from "@/lib/auth";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -13,22 +16,43 @@ export const metadata: Metadata = buildMetadata({
 
 export default function AdminNewPostPage() {
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
-      <Badge
-        variant="outline"
-        className="h-auto rounded-full border-brand/30 bg-brand-muted/40 px-3 py-1 text-brand"
-      >
-        Phase 8
-      </Badge>
-      <h1 className="mt-4 font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
-        New post
-      </h1>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        Title, Tiptap, autosave and publishing still belong to Phase 8. Cover
-        selection already uses the Phase 7 media picker so the editor will not
-        need a second upload path.
-      </p>
-      <EditorMediaPanel />
+    <Suspense fallback={<EditorSkeleton />}>
+      <NewPostBody />
+    </Suspense>
+  );
+}
+
+async function NewPostBody() {
+  const session = await requireStaff("/admin/posts/new");
+  const taxonomy = await listEditorTaxonomy();
+
+  return (
+    <PostForm
+      post={null}
+      categories={taxonomy.data.categories}
+      tags={taxonomy.data.tags}
+      authors={
+        taxonomy.data.authors.length > 0
+          ? taxonomy.data.authors
+          : [
+              {
+                id: session.userId,
+                display_name: session.profile.display_name,
+                slug: session.profile.slug,
+                role: session.profile.role,
+              },
+            ]
+      }
+      currentUserId={session.userId}
+    />
+  );
+}
+
+function EditorSkeleton() {
+  return (
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+      <Skeleton className="h-10 w-64" />
+      <Skeleton className="mt-8 h-[28rem] w-full" />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 A dynamic editorial publishing platform: a typography-first public publication, a full admin panel, an optimised media pipeline, and a structured rich-text editor. Built with Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui and Supabase.
 
-> **Status: Phase 7 complete.** Staff sign in at `/admin`. The newsroom dashboard shows live counts. The media library uploads, compresses and stores images. The article editor arrives in Phase 8. See `docs/PHASE_1.md` through `docs/PHASE_7.md`.
+> **Status: Phase 8 complete.** Staff sign in at `/admin`. The newsroom can compose, autosave and publish articles with Tiptap. Images still go through the Phase 7 optimizer. See `docs/PHASE_1.md` through `docs/PHASE_8.md`.
 
 ## Stack
 
@@ -13,6 +13,7 @@ A dynamic editorial publishing platform: a typography-first public publication, 
 | UI | React 19, Tailwind CSS v4, shadcn/ui (Base UI primitives) |
 | Icons / motion | Lucide React, Motion |
 | Data | Supabase Postgres, Auth, Storage, RLS |
+| Editor | Tiptap 3 (JSON bodies, not HTML) |
 | Forms | React Hook Form + Zod |
 | Themes | next-themes (class strategy, system aware) |
 
@@ -90,10 +91,12 @@ src/
       about/ contact/ newsletter/
       privacy-policy/ terms-and-conditions/ cookie-policy/
     admin/             Staff newsroom (login + protected panel)
+      (panel)/posts    Article list, composer, editor
     layout.tsx         Root layout: fonts, metadata, providers
     not-found.tsx      Custom 404
   components/
     admin/             Login, shell, sidebar, dashboard widgets
+    editor/            Tiptap composer, toolbar, image node, post form
     media/             Uploader, library, picker, delete workflow
     brand/             Wordmark
     content/           Article cards, body renderer, listing, contact form
@@ -103,7 +106,7 @@ src/
   hooks/               Reusable client hooks
   lib/
     auth/              Staff session, role checks, safe redirects
-    admin/             Dashboard statistics and media queries (uncached, staff-only)
+    admin/             Dashboard statistics, media and post queries (uncached, staff-only)
     media/             Compression settings, storage paths, media types
     constants.ts       Site identity and navigation
     env.ts             Validated environment access
@@ -148,6 +151,7 @@ docs/                  Architecture, phase notes, Supabase setup
 - `docs/PHASE_5.md` — admin login, cookie sessions and server-side role checks.
 - `docs/PHASE_6.md` — newsroom shell, live statistics and charts.
 - `docs/PHASE_7.md` — image uploader, optimization, library and picker.
+- `docs/PHASE_8.md` — Tiptap editor, autosave and publishing.
 - `docs/SUPABASE.md` — project setup, migrations and admin provisioning.
 - `MASTER_PROMPT.md` — the full product specification and phase plan.
 

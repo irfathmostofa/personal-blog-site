@@ -274,6 +274,46 @@
   .article-prose td {
     @apply border-b border-border px-3 py-2 align-top;
   }
+
+  .article-prose mark {
+    @apply rounded-sm bg-brand-muted px-0.5 text-foreground;
+  }
+
+  .article-prose .tableWrapper {
+    @apply my-8 overflow-x-auto;
+  }
+
+  .editor-surface.tiptap {
+    outline: none;
+  }
+
+  .editor-surface p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    @apply pointer-events-none float-left h-0 text-muted-foreground italic;
+  }
+
+  .editor-surface img {
+    @apply my-0;
+  }
+
+  .editor-surface .article-image {
+    @apply my-8;
+  }
+
+  .editor-surface .hljs-comment,
+  .editor-surface .hljs-quote {
+    @apply text-muted-foreground italic;
+  }
+
+  .editor-surface .hljs-keyword,
+  .editor-surface .hljs-selector-tag {
+    @apply text-brand;
+  }
+
+  .editor-surface .hljs-string,
+  .editor-surface .hljs-attr {
+    color: oklch(0.52 0.12 145);
+  }
 }
 
 @utility container-editorial {
