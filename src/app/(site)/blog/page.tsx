@@ -72,18 +72,6 @@ async function BlogListing({ searchParams }: { searchParams: Search }) {
 
   if (!posts.configured) return <div className="mt-10"><UnconfiguredNotice /></div>;
 
-  function hrefFor(nextPage: number) {
-    const next = new URLSearchParams();
-    if (q) next.set("q", q);
-    if (categorySlug) next.set("category", categorySlug);
-    if (tagSlug) next.set("tag", tagSlug);
-    if (sort !== "newest") next.set("sort", sort);
-    if (view !== "grid") next.set("view", view);
-    if (nextPage > 1) next.set("page", String(nextPage));
-    const query = next.toString();
-    return query ? `/blog?${query}` : "/blog";
-  }
-
   return (
     <div className="mt-10">
       <ListingToolbar
@@ -120,7 +108,6 @@ async function BlogListing({ searchParams }: { searchParams: Search }) {
       <Pagination
         page={posts.data.page}
         pageCount={posts.data.pageCount}
-        hrefFor={hrefFor}
       />
     </div>
   );

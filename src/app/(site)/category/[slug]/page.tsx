@@ -153,9 +153,6 @@ async function CategoryContent({
       <Pagination
         page={posts.data.page}
         pageCount={posts.data.pageCount}
-        hrefFor={(next) =>
-          next > 1 ? `/category/${slug}?page=${next}` : `/category/${slug}`
-        }
       />
     </div>
   );

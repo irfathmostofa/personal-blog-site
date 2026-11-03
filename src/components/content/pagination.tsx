@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { Suspense } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -6,13 +10,36 @@ import { cn } from "@/lib/utils";
 export function Pagination({
   page,
   pageCount,
-  hrefFor,
 }: {
   page: number;
   pageCount: number;
-  hrefFor: (page: number) => string;
 }) {
   if (pageCount <= 1) return null;
+
+  return (
+    <Suspense fallback={null}>
+      <PaginationLinks page={page} pageCount={pageCount} />
+    </Suspense>
+  );
+}
+
+function PaginationLinks({
+  page,
+  pageCount,
+}: {
+  page: number;
+  pageCount: number;
+}) {
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  function hrefFor(nextPage: number) {
+    const next = new URLSearchParams(params.toString());
+    if (nextPage > 1) next.set("page", String(nextPage));
+    else next.delete("page");
+    const query = next.toString();
+    return query ? `${pathname}?${query}` : pathname;
+  }
 
   const prev = page > 1 ? page - 1 : null;
   const next = page < pageCount ? page + 1 : null;

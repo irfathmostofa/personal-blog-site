@@ -83,7 +83,9 @@ export function ArticleEditor({
     },
   });
 
-  editorRef.current = editor;
+  useEffect(() => {
+    editorRef.current = editor;
+  }, [editor]);
 
   useEffect(() => {
     if (!editor) return;
@@ -94,9 +96,20 @@ export function ArticleEditor({
     editor,
     selector: (snapshot) => {
       if (!snapshot.editor) return { words: 0, characters: 0 };
+      const counter = snapshot.editor.storage?.characterCount as
+        | { words?: () => number; characters?: () => number }
+        | undefined;
+      if (typeof counter?.words === "function" && typeof counter.characters === "function") {
+        return {
+          words: counter.words(),
+          characters: counter.characters(),
+        };
+      }
+      const text = snapshot.editor.getText();
+      const trimmed = text.trim();
       return {
-        words: snapshot.editor.storage.characterCount.words(),
-        characters: snapshot.editor.storage.characterCount.characters(),
+        words: trimmed ? trimmed.split(/\s+/).length : 0,
+        characters: text.length,
       };
     },
   });

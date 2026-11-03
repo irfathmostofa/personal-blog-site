@@ -25,10 +25,8 @@ const STATUS_OPTIONS = [
 
 export function CommentManager({
   result,
-  hrefFor,
 }: {
   result: CommentListResult;
-  hrefFor: (page: number) => string;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -164,7 +162,7 @@ export function CommentManager({
         </ul>
       ) : null}
 
-      <Pagination page={result.page} pageCount={result.pageCount} hrefFor={hrefFor} />
+      <Pagination page={result.page} pageCount={result.pageCount} />
 
       <ConfirmDialog
         open={Boolean(deleting)}

@@ -50,14 +50,5 @@ async function SubscribersBody({ searchParams }: { searchParams: Search }) {
     status,
   });
 
-  function hrefFor(nextPage: number) {
-    const next = new URLSearchParams();
-    if (q) next.set("q", q);
-    if (status) next.set("status", status);
-    if (nextPage > 1) next.set("page", String(nextPage));
-    const query = next.toString();
-    return query ? `/admin/subscribers?${query}` : "/admin/subscribers";
-  }
-
-  return <SubscriberManager result={result} hrefFor={hrefFor} status={status} />;
+  return <SubscriberManager result={result} status={status} />;
 }

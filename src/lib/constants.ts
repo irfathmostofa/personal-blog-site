@@ -71,3 +71,5 @@ export const ADMIN_NAV_PHASE: Record<(typeof ADMIN_NAV)[number]["href"], string>
 export const POSTS_PER_PAGE = 9;
 export const MEDIA_PER_PAGE = 24;
 export const ADMIN_POSTS_PER_PAGE = 20;
+export const ADMIN_PER_PAGE = 20;
+export const COMMENTS_PER_PAGE = 20;

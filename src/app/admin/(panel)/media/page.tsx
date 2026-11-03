@@ -58,16 +58,6 @@ async function MediaBody({ searchParams }: { searchParams: Search }) {
     sort,
   });
 
-  function hrefFor(nextPage: number) {
-    const next = new URLSearchParams();
-    if (q) next.set("q", q);
-    if (folder) next.set("folder", folder);
-    if (sort !== "newest") next.set("sort", sort);
-    if (nextPage > 1) next.set("page", String(nextPage));
-    const query = next.toString();
-    return query ? `/admin/media?${query}` : "/admin/media";
-  }
-
   const filters = [
     q ? `“${q}”` : null,
     folder || null,
@@ -79,7 +69,6 @@ async function MediaBody({ searchParams }: { searchParams: Search }) {
       result={result.data}
       configured={result.configured}
       error={result.error}
-      hrefFor={hrefFor}
       queryLabel={filters.length ? filters.join(" · ") : undefined}
     />
   );

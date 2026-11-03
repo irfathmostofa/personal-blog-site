@@ -120,7 +120,6 @@ async function TagContent({
       <Pagination
         page={posts.data.page}
         pageCount={posts.data.pageCount}
-        hrefFor={(next) => (next > 1 ? `/tag/${slug}?page=${next}` : `/tag/${slug}`)}
       />
     </div>
   );

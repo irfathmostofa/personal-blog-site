@@ -40,11 +40,9 @@ function downloadCsv(csv: string) {
 
 export function SubscriberManager({
   result,
-  hrefFor,
   status,
 }: {
   result: SubscriberListResult;
-  hrefFor: (page: number) => string;
   status: SubscriberStatus | "";
 }) {
   const router = useRouter();
@@ -200,7 +198,7 @@ export function SubscriberManager({
         </div>
       ) : null}
 
-      <Pagination page={result.page} pageCount={result.pageCount} hrefFor={hrefFor} />
+      <Pagination page={result.page} pageCount={result.pageCount} />
 
       <ConfirmDialog
         open={Boolean(removing)}

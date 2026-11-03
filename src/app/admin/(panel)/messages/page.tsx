@@ -50,14 +50,5 @@ async function MessagesBody({ searchParams }: { searchParams: Search }) {
     filter,
   });
 
-  function hrefFor(nextPage: number) {
-    const next = new URLSearchParams();
-    if (q) next.set("q", q);
-    if (filter !== "inbox") next.set("filter", filter);
-    if (nextPage > 1) next.set("page", String(nextPage));
-    const query = next.toString();
-    return query ? `/admin/messages?${query}` : "/admin/messages";
-  }
-
-  return <MessageManager result={result} hrefFor={hrefFor} />;
+  return <MessageManager result={result} />;
 }

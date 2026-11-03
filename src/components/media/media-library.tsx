@@ -25,13 +25,11 @@ export function MediaLibrary({
   result,
   configured,
   error,
-  hrefFor,
   queryLabel,
 }: {
   result: MediaListResult;
   configured: boolean;
   error: string | null;
-  hrefFor: (page: number) => string;
   queryLabel?: string;
 }) {
   const router = useRouter();
@@ -86,7 +84,7 @@ export function MediaLibrary({
         </div>
       ) : null}
 
-      <Pagination page={result.page} pageCount={result.pageCount} hrefFor={hrefFor} />
+      <Pagination page={result.page} pageCount={result.pageCount} />
 
       <Dialog open={Boolean(active)} onOpenChange={(open) => !open && setActive(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">

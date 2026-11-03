@@ -70,22 +70,11 @@ async function PostsBody({ searchParams }: { searchParams: Search }) {
     sort,
   });
 
-  function hrefFor(nextPage: number) {
-    const next = new URLSearchParams();
-    if (q) next.set("q", q);
-    if (status) next.set("status", status);
-    if (sort !== "updated") next.set("sort", sort);
-    if (nextPage > 1) next.set("page", String(nextPage));
-    const query = next.toString();
-    return query ? `/admin/posts?${query}` : "/admin/posts";
-  }
-
   return (
     <PostList
       result={result.data}
       configured={result.configured}
       error={result.error}
-      hrefFor={hrefFor}
     />
   );
 }

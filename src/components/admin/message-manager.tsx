@@ -32,10 +32,8 @@ const FILTER_OPTIONS = [
 
 export function MessageManager({
   result,
-  hrefFor,
 }: {
   result: MessageListResult;
-  hrefFor: (page: number) => string;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -138,7 +136,7 @@ export function MessageManager({
         </ul>
       ) : null}
 
-      <Pagination page={result.page} pageCount={result.pageCount} hrefFor={hrefFor} />
+      <Pagination page={result.page} pageCount={result.pageCount} />
 
       <Dialog open={Boolean(active)} onOpenChange={(next) => !next && setActive(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">

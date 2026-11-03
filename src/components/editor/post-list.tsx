@@ -26,12 +26,10 @@ export function PostList({
   result,
   configured,
   error,
-  hrefFor,
 }: {
   result: AdminPostListResult;
   configured: boolean;
   error: string | null;
-  hrefFor: (page: number) => string;
 }) {
   return (
     <div className="space-y-6">
@@ -66,7 +64,7 @@ export function PostList({
           ))}
         </ul>
       )}
-      <Pagination page={result.page} pageCount={result.pageCount} hrefFor={hrefFor} />
+      <Pagination page={result.page} pageCount={result.pageCount} />
     </div>
   );
 }
