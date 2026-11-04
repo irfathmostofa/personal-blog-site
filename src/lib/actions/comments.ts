@@ -7,6 +7,7 @@ import { fail, type ActionResult } from "@/lib/admin/result";
 import { requireStaff } from "@/lib/auth";
 import { revalidateComments } from "@/lib/cache/revalidate";
 import { isSupabaseConfigured } from "@/lib/env";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { tryCreatePublicClient } from "@/lib/supabase/public";
 import type { Comment, CommentStatus } from "@/lib/types/database";
@@ -20,6 +21,35 @@ function refreshComments(slug?: string) {
   revalidateComments(slug);
   revalidatePath("/admin/comments");
   revalidatePath("/admin/dashboard");
+}
+
+type PendingCommentInsert = {
+  post_id: string;
+  parent_id?: string;
+  author_name: string;
+  author_email: string;
+  body: string;
+  status: "pending";
+  ip_hash: string | null;
+  user_agent: string | null;
+};
+
+async function insertPendingComment(
+  client: NonNullable<Awaited<ReturnType<typeof tryCreatePublicClient>>>,
+  payload: PendingCommentInsert,
+): Promise<boolean> {
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const admin = createAdminClient();
+      const { error: adminError } = await admin.from("comments").insert(payload);
+      if (!adminError) return true;
+    } catch {
+      // Fall through to the anon insert path.
+    }
+  }
+
+  const { error } = await client.from("comments").insert(payload);
+  return !error;
 }
 
 async function hashIp(value: string): Promise<string> {
@@ -126,18 +156,19 @@ export async function submitComment(
   }
 
   const ipHash = ip ? await hashIp(ip) : null;
-  const { error } = await client.from("comments").insert({
+  const payload: PendingCommentInsert = {
     post_id: post.id,
-    parent_id: parentId,
     author_name: parsed.data.author_name,
     author_email: parsed.data.author_email,
     body: parsed.data.body,
     status: "pending",
     ip_hash: ipHash,
     user_agent: userAgent,
-  });
+  };
+  if (parentId) payload.parent_id = parentId;
 
-  if (error) {
+  const inserted = await insertPendingComment(client, payload);
+  if (!inserted) {
     return {
       status: "error",
       message: "The comment could not be stored. Please try again in a moment.",
